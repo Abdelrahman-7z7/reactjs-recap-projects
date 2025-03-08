@@ -6,18 +6,12 @@ import Model from './Model'
 
 import classes from './PostList.module.css'
 
-function PostList(){
+function PostList({isPosting, onStopPosting}){
 
     //useState must have a default value which is the one between the (), and it could be any type of data
         // useState returns an array, has exactly two element "stateData[0] = current state value", "stateData[1] = state updating function"
         const [enteredBody, setEnteredBody] = useState('');
         const [enteredAuthor, setEnteredAuthor] = useState('');
-        const [modelIsVisible, setModelVisible] = useState(true); //true is the default value
-    
-
-        function hideModelHandler () {
-            setModelVisible(false)
-        } 
 
         function bodyChangeHandler(event){
             //target refers to the textarea (the field itself)
@@ -43,8 +37,8 @@ function PostList(){
                 //     ): null
 
                 //instead of the previous approach
-                modelIsVisible && (
-                    <Model onClose={hideModelHandler}>
+                isPosting && (
+                    <Model onClose={onStopPosting}>
                         <NewPost onBodyChange={bodyChangeHandler} onAuthorChange={authorChangeHandler}/>
                     </Model>
                 )
