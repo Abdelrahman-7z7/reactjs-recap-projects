@@ -1,4 +1,4 @@
-import {useState} from 'react'
+import { useState } from 'react';
 
 import Post from './post';
 import NewPost from './NewPost';
@@ -8,23 +8,16 @@ import classes from './PostList.module.css'
 
 function PostList({isPosting, onStopPosting}){
 
-    //useState must have a default value which is the one between the (), and it could be any type of data
-        // useState returns an array, has exactly two element "stateData[0] = current state value", "stateData[1] = state updating function"
-        const [enteredBody, setEnteredBody] = useState('');
-        const [enteredAuthor, setEnteredAuthor] = useState('');
+    //state updating function for getting the new post from the NewPost file and map it to the postList
+    const [posts, setPosts] = useState([]);
 
-        function bodyChangeHandler(event){
-            //target refers to the textarea (the field itself)
-            // console.log(event.target.value)
-            setEnteredBody(event.target.value)
-        }
-
-        function authorChangeHandler(event){
-            //target refers to the textarea (the field itself)
-            // console.log(event.target.value)
-            setEnteredAuthor(event.target.value)
-        }
-
+    function addPostHandler(postData){
+        //add the new postData and then follow it with the rest of the existing post data
+        // setPosts([postData, ...posts]);
+        
+        //a better way for updating the state since it is relying on previous states
+        setPosts((existingPosts) => [postData, ...existingPosts])
+    }
     return(
         // since NewPost now is a sibling of the list and it is out of order we cannot use it like that
         <>
@@ -39,18 +32,35 @@ function PostList({isPosting, onStopPosting}){
                 //instead of the previous approach
                 isPosting && (
                     <Model onClose={onStopPosting}>
-                        <NewPost onBodyChange={bodyChangeHandler} onAuthorChange={authorChangeHandler}/>
+                        {/* <NewPost onBodyChange={bodyChangeHandler} onAuthorChange={authorChangeHandler} onCancel={onStopPosting}/> */}
+                        <NewPost onCancel={onStopPosting} onAddPost={addPostHandler}/>
                     </Model>
                 )
             }
 
 
-            <ul className={classes.posts}>
                 {/* //notice that customized components are named with Alphabetic instead of lowercase letters <Post /> .... <div><div/> */}
-                <Post author={enteredAuthor} body={enteredBody} />
-                <Post author="Manuel" body="React.js awesome!" />
-                <Post author="Jonas" body="React.js awesome!" />
-            </ul>
+                {
+                    /* <Post author="Manuel" body="React.js awesome!" />
+                    <Post author="Jonas" body="React.js awesome!" /> */
+                    
+                    //adding posts conditionally
+                    posts.length > 0 && (
+                        <ul className={classes.posts}>
+                        {/* //adding the posts state by map function since it is an array taking into account that the each post must be executed as an <Post /> element
+                        //each element in react must have a unique key which is a built-in method that it works like a unique id for each element... post.body can be the prop.key but this is just for the demo */}
+                        {posts.map((post) => <Post key={post.body} author={post.author} body={post.body}></Post>)}
+                        </ul>
+                    )
+                }
+                {
+                    posts.length === 0 && (
+                        <div style={{textAlign:'center', color:'White'}}>
+                            <h2>There are no posts yet.</h2>
+                            <p>Start adding some!!</p>
+                        </div>
+                    )
+                }
         </>
     )
 }
