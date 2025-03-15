@@ -16,13 +16,18 @@ function PostList({isPosting, onStopPosting}){
     //state updating function for getting the new post from the NewPost file and map it to the postList
     const [posts, setPosts] = useState([]);
 
+    //handling the loading state
+    const [isFetching, setIsFetching] = useState(false);
+
     //unlike useState, it doesnt return a value but takes a function and as a second argument it takes an array (useEffect)
     //useEffect does not allow the first argument function to be asynchronized instead it can have an inner one and then we call it
     useEffect(()=>{
         async function fetchPosts(){
+            setIsFetching(true)
             const res = await fetch('http://localhost:8085/posts');
             const resData = await res.json();
             setPosts(resData.posts);
+            setIsFetching(false)
         }
 
         fetchPosts();
@@ -71,7 +76,7 @@ function PostList({isPosting, onStopPosting}){
                     <Post author="Jonas" body="React.js awesome!" /> */
                     
                     //adding posts conditionally
-                    posts.length > 0 && (
+                    !isFetching && posts.length > 0 && (
                         <ul className={classes.posts}>
                         {/* //adding the posts state by map function since it is an array taking into account that the each post must be executed as an <Post /> element
                         //each element in react must have a unique key which is a built-in method that it works like a unique id for each element... post.body can be the prop.key but this is just for the demo */}
@@ -80,10 +85,17 @@ function PostList({isPosting, onStopPosting}){
                     )
                 }
                 {
-                    posts.length === 0 && (
+                    !isFetching && posts.length === 0 && (
                         <div style={{textAlign:'center', color:'White'}}>
                             <h2>There are no posts yet.</h2>
                             <p>Start adding some!!</p>
+                        </div>
+                    )
+                }
+                {
+                    isFetching && (
+                        <div style={{textAlign:'center', color:'White'}}>
+                            <p>Loading Posts...</p>
                         </div>
                     )
                 }
