@@ -19,14 +19,27 @@ function PostList({isPosting, onStopPosting}){
     //handling the loading state
     const [isFetching, setIsFetching] = useState(false);
 
+    //handling errors
+    const [error, setError] = useState(null);
+
     //unlike useState, it doesnt return a value but takes a function and as a second argument it takes an array (useEffect)
     //useEffect does not allow the first argument function to be asynchronized instead it can have an inner one and then we call it
     useEffect(()=>{
         async function fetchPosts(){
             setIsFetching(true)
-            const res = await fetch('http://localhost:8085/posts');
-            const resData = await res.json();
-            setPosts(resData.posts);
+            setError(null)
+
+            try{
+                const res = await fetch('http://localhost:8085/posts');
+                if (!res.ok){
+                    throw new Error(`Error ${res.status} ${res.statusText}`)
+                }
+                const resData = await res.json();
+                setPosts(resData.posts);
+            }catch(err){
+                setError(err.message);
+            }
+
             setIsFetching(false)
         }
 
@@ -99,6 +112,8 @@ function PostList({isPosting, onStopPosting}){
                         </div>
                     )
                 }
+                { isFetching && error && <p style={{ color: "red" }}>Failed to load posts: {error}</p>}
+
         </>
     )
 }
