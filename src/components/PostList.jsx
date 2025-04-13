@@ -1,67 +1,67 @@
-import { useState, useEffect } from 'react';
+// import { useState, useEffect } from 'react';
+import { useLoaderData } from 'react-router-dom';
 
 import Post from './post';
-import NewPost from './NewPost';
-import Model from './Model'
-
 import classes from './PostList.module.css'
 
-function PostList({isPosting, onStopPosting}){
+function PostList(){
+
+    //the useLoaderData hook is fetching all the data returned by the posts loader 
+    const posts = useLoaderData();
 
     //using the rendered backend server to fetch (by default it is a get request) the existing data
     // fetch('http://localhost:8085/posts').then(res => res.json()).then(data => {
     //     setPosts(data.posts)
     // }) //issue with that code that it would cuz an infinite-loop where after every change reactjs runs the function again
 
-    //state updating function for getting the new post from the NewPost file and map it to the postList
-    const [posts, setPosts] = useState([]);
+    // //state updating function for getting the new post from the NewPost file and map it to the postList
+    // const [posts, setPosts] = useState([]);
 
-    //handling the loading state
-    const [isFetching, setIsFetching] = useState(false);
+    // //handling the loading state
+    // const [isFetching, setIsFetching] = useState(false);
 
     //handling errors
-    const [error, setError] = useState(null);
+    // const [error, setError] = useState(null);
 
     //unlike useState, it doesnt return a value but takes a function and as a second argument it takes an array (useEffect)
     //useEffect does not allow the first argument function to be asynchronized instead it can have an inner one and then we call it
-    useEffect(()=>{
-        async function fetchPosts(){
-            setIsFetching(true)
-            setError(null)
+    // useEffect(()=>{
+    //     async function fetchPosts(){
+    //         setIsFetching(true)
+    //         setError(null)
 
-            try{
-                const res = await fetch('http://localhost:8085/posts');
-                if (!res.ok){
-                    throw new Error(`Error ${res.status} ${res.statusText}`)
-                }
-                const resData = await res.json();
-                setPosts(resData.posts);
-            }catch(err){
-                setError(err.message);
-            }
+    //         try{
+    //             if (!res.ok){
+    //                 throw new Error(`Error ${res.status} ${res.statusText}`)
+    //             }
+    //             const resData = await res.json();
+    //             setPosts(resData.posts);
+    //         }catch(err){
+    //             setError(err.message);
+    //         }
 
-            setIsFetching(false)
-        }
+    //         setIsFetching(false)
+    //     }
 
-        fetchPosts();
-    }, [])
+    //     fetchPosts();
+    // }, [])
 
-    function addPostHandler(postData){
-        //creating the post in the rendered server using fetch method, RETURNS a response
-        fetch('http://localhost:8085/posts', {
-            method: 'POST',
-            body: JSON.stringify(postData),
-            headers: {
-                'Content-type': 'application/json'
-            }
-        });
+    // function addPostHandler(postData){
+    //     //creating the post in the rendered server using fetch method, RETURNS a response
+    //     fetch('http://localhost:8085/posts', {
+    //         method: 'POST',
+    //         body: JSON.stringify(postData),
+    //         headers: {
+    //             'Content-type': 'application/json'
+    //         }
+    //     });
 
-        //add the new postData and then follow it with the rest of the existing post data
-        // setPosts([postData, ...posts]);
+    //     //add the new postData and then follow it with the rest of the existing post data
+    //     // setPosts([postData, ...posts]);
         
-        //a better way for updating the state since it is relying on previous states
-        setPosts((existingPosts) => [postData, ...existingPosts])
-    }
+    //     //a better way for updating the state since it is relying on previous states
+    //     setPosts((existingPosts) => [postData, ...existingPosts])
+    // }
     return(
         // since NewPost now is a sibling of the list and it is out of order we cannot use it like that
         <>
@@ -74,12 +74,12 @@ function PostList({isPosting, onStopPosting}){
                 //     ): null
 
                 //instead of the previous approach
-                isPosting && (
-                    <Model onClose={onStopPosting}>
-                        {/* <NewPost onBodyChange={bodyChangeHandler} onAuthorChange={authorChangeHandler} onCancel={onStopPosting}/> */}
-                        <NewPost onCancel={onStopPosting} onAddPost={addPostHandler}/>
-                    </Model>
-                )
+                // isPosting && (
+                //     <Model onClose={onStopPosting}>
+                //         {/* <NewPost onBodyChange={bodyChangeHandler} onAuthorChange={authorChangeHandler} onCancel={onStopPosting}/> */}
+                //         <NewPost onCancel={onStopPosting} onAddPost={addPostHandler}/>
+                //     </Model>
+                // )
             }
 
 
@@ -89,30 +89,23 @@ function PostList({isPosting, onStopPosting}){
                     <Post author="Jonas" body="React.js awesome!" /> */
                     
                     //adding posts conditionally
-                    !isFetching && posts.length > 0 && (
+                    posts.length > 0 && (
                         <ul className={classes.posts}>
                         {/* //adding the posts state by map function since it is an array taking into account that the each post must be executed as an <Post /> element
                         //each element in react must have a unique key which is a built-in method that it works like a unique id for each element... post.body can be the prop.key but this is just for the demo */}
-                        {posts.map((post) => <Post key={post.body} author={post.author} body={post.body}></Post>)}
+                        {posts.map((post) => <Post key={post.id} author={post.author} body={post.body}></Post>)}
                         </ul>
                     )
                 }
                 {
-                    !isFetching && posts.length === 0 && (
+                    posts.length === 0 && (
                         <div style={{textAlign:'center', color:'White'}}>
                             <h2>There are no posts yet.</h2>
                             <p>Start adding some!!</p>
                         </div>
                     )
                 }
-                {
-                    isFetching && (
-                        <div style={{textAlign:'center', color:'White'}}>
-                            <p>Loading Posts...</p>
-                        </div>
-                    )
-                }
-                { isFetching && error && <p style={{ color: "red" }}>Failed to load posts: {error}</p>}
+                {/* { isFetching && error && <p style={{ color: "red" }}>Failed to load posts: {error}</p>} */}
 
         </>
     )

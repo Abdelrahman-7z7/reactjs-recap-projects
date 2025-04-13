@@ -4,8 +4,8 @@ import {RouterProvider, createBrowserRouter} from 'react-router-dom'
 import RootLayout from './Routes/RootLayout.jsx'
 
 import './index.css'
-import App from './App.jsx'
-import NewPost from './components/NewPost.jsx'
+import Posts, {loader as postsLoader} from './Routes/Posts.jsx'
+import NewPost , {action as newPostAction} from './Routes/NewPost.jsx'
 
 // the createBrowserRouter takes array as an argument => an array of all the routers you want to have => and that list is an OBJECT
 
@@ -15,8 +15,15 @@ const router = createBrowserRouter([
     path:'/', 
     element:<RootLayout /> , 
     children:[
-      {path:'/', element: <App />}, //<our-domain> entering our domain => we should also define the element that should be run when we call that path 
-      {path: '/create-post', element: <NewPost />}
+      {
+        path:'/', 
+        element: <Posts />, 
+        //used to fetch data before rendering the element in here BUT normally we keep this path clean and add the function in the element page and import it here
+        // loader: ()=>{},
+        loader: postsLoader,
+        //we can use action to load data before it gets activated => in accordance when the form is submitted this action will be run 
+        children:[{path: '/create-post', element: <NewPost />, action: newPostAction}]
+      }, //<our-domain> entering our domain => we should also define the element that should be run when we call that path 
   ]}
 ]);
 
