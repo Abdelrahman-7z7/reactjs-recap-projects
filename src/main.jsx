@@ -6,7 +6,7 @@ import RootLayout from './Routes/RootLayout.jsx'
 import './index.css'
 import Posts, {loader as postsLoader} from './Routes/Posts.jsx'
 import NewPost , {action as newPostAction} from './Routes/NewPost.jsx'
-
+import PostDetails, {loader as detailsLoader} from './Routes/PostDetails.jsx'
 // the createBrowserRouter takes array as an argument => an array of all the routers you want to have => and that list is an OBJECT
 
 const router = createBrowserRouter([
@@ -22,8 +22,11 @@ const router = createBrowserRouter([
         // loader: ()=>{},
         loader: postsLoader,
         //we can use action to load data before it gets activated => in accordance when the form is submitted this action will be run 
-        children:[{path: '/create-post', element: <NewPost />, action: newPostAction}]
-      }, //<our-domain> entering our domain => we should also define the element that should be run when we call that path 
+        children:[
+          {path: '/create-post', element: <NewPost />, action: newPostAction},
+          {path: '/:id', element: <PostDetails/>, loader: detailsLoader }
+        ]
+      }, //<our-domain> entering our domain => we should also define the element that should be run when we call that path
   ]}
 ]);
 

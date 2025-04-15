@@ -83,30 +83,34 @@ function PostList(){
             }
 
 
-                {/* //notice that customized components are named with Alphabetic instead of lowercase letters <Post /> .... <div><div/> */}
-                {
-                    /* <Post author="Manuel" body="React.js awesome!" />
-                    <Post author="Jonas" body="React.js awesome!" /> */
-                    
-                    //adding posts conditionally
-                    posts.length > 0 && (
-                        <ul className={classes.posts}>
-                        {/* //adding the posts state by map function since it is an array taking into account that the each post must be executed as an <Post /> element
-                        //each element in react must have a unique key which is a built-in method that it works like a unique id for each element... post.body can be the prop.key but this is just for the demo */}
-                        {posts.map((post) => <Post key={post.id} author={post.author} body={post.body}></Post>)}
-                        </ul>
-                    )
-                }
-                {
-                    posts.length === 0 && (
-                        <div style={{textAlign:'center', color:'White'}}>
-                            <h2>There are no posts yet.</h2>
-                            <p>Start adding some!!</p>
-                        </div>
-                    )
-                }
-                {/* { isFetching && error && <p style={{ color: "red" }}>Failed to load posts: {error}</p>} */}
+            {/* //notice that customized components are named with Alphabetic instead of lowercase letters <Post /> .... <div><div/> */}
+            {
+                /* <Post author="Manuel" body="React.js awesome!" />
+                <Post author="Jonas" body="React.js awesome!" /> */
+                
+                //adding posts conditionally
+                posts.length > 0 && (
+                    <ul className={classes.posts}>
+                    {/* //adding the posts state by map function since it is an array taking into account that the each post must be executed as an <Post /> element
+                    //each element in react must have a unique key which is a built-in method that it works like a unique id for each element... post.body can be the prop.key but this is just for the demo */}
+                    {
+                        posts.map(
+                            (post) => <Post key={post.id} id={post.id} author={post.author} body={post.body}></Post>
+                        )
+                    }
 
+                    </ul>
+                )
+            }
+            {
+                posts.length === 0 && (
+                    <div style={{textAlign:'center', color:'White'}}>
+                        <h2>There are no posts yet.</h2>
+                        <p>Start adding some!!</p>
+                    </div>
+                )
+            }
+            {/* { isFetching && error && <p style={{ color: "red" }}>Failed to load posts: {error}</p>} */}
         </>
     )
 }
